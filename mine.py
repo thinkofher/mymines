@@ -38,10 +38,13 @@ def check_neighborhood(matrix, x, y):
     """
     Returns number of bombs in neighborhood of cell
     """
+    # Create all possible combinations of neighboor location
+    # Example: (-1, 1), (0, 1), (1, 0) ...
     neighborhood_combinations = list(product([-1, 0, 1], repeat=2))
 
     # Remove coordinates of the cell subjected to analysis
     neighborhood_combinations.remove((0, 0))
+
     n_of_bombs = 0
     for dx, dy in neighborhood_combinations:
         try:
