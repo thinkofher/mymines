@@ -3,6 +3,7 @@ from itertools import product
 
 EMPTY = 'o'
 BOMB = 'x'
+NUMBER = int
 
 
 def gen_field_matrix(width=8, heigth=10):
@@ -13,6 +14,8 @@ def gen_field_matrix(width=8, heigth=10):
 
 
 def add_random_bomb_cords(cords_list, width, heigth):
+
+    # Substract 1 because of list indexing starts at 0
     bomb_cords = (randint(0, width-1),
                   randint(0, heigth-1))
     if bomb_cords in cords_list:
@@ -61,12 +64,13 @@ def numbering_field(matrix):
         for x, cell in enumerate(width_vector):
             if cell != BOMB:
                 n_of_bombs = check_neighborhood(matrix, x, y)
-                matrix[y][x] = str(n_of_bombs)
+                matrix[y][x] = n_of_bombs
     return matrix
 
 
 def visualize_field(matrix):
     for width_vector in matrix:
+        width_vector = [str(elem) for elem in width_vector]
         print(' '.join(width_vector))
 
 
