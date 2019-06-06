@@ -1,69 +1,62 @@
-import wx
+import tkinter as tk
 import mine
 
 
-class MinePanel(wx.Panel):
+class TopFrame(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.master = master
+        self.pack()
+        self.set_new_game_button()
 
-    def __init__(self, parent):
-        super().__init__(parent)
-        main_sizer = wx.BoxSizer(wx.VERTICAL)
+    def set_new_game_button(self):
+        self.new_game = tk.Button(self, text="New Game")
+        self.new_game.pack(side="top", padx=10, pady=10)
 
-        new_game_button = wx.Button(self, label='😎', size=wx.Size(40, 40))
-        # main_sizer.Add(new_game_button, 0, wx.ALL | wx.CENTER, 5)
+    def set_new_game_command(self, func):
+        self.new_game.config(command=func)
+
+    def say_hi(self):
+        print("hi there, everyone!")
+
+
+class Mines(tk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master)
+        self.master = master
+        self.pack()
+        self.gen_buttons()
+
+    def gen_buttons(self):
 
         field = mine.gen_field_matrix()
         field = mine.fill_with_bombs(field, 6)
         field = mine.numbering_field(field)
-        self.mine_sizer = MineSizer(self, field)
+        # width, heigth = len(field[0]), len(field)
 
-        new_game_button.Bind(
-            wx.EVT_BUTTON, self.mine_sizer.rearange_bombs_randomly)
-        main_sizer.Add(new_game_button, 0, wx.ALL | wx.CENTER, 5)
-        main_sizer.Add(self.mine_sizer, 1, wx.CENTER)
-        self.SetSizer(main_sizer)
-
-
-class MineSizer(wx.GridSizer):
-
-    def __init__(self, parent, mine_field, vgap=0, hgap=0):
-        self.mine_field = mine_field
-        self.parent = parent
-        columns, rows = len(self.mine_field[0]), len(self.mine_field)
-        super().__init__(rows, columns, vgap, hgap)
-        self.init_bomb_field()
-
-    def init_bomb_field(self):
-        self.Clear()
-        for row in self.mine_field:
-            for cell in row:
-                self.Add(
-                    wx.Button(self.parent, label=str(cell),
-                              size=wx.Size(20, 20)),
-                    0, wx.ALL | wx.ALIGN_TOP, 5)
-
-    def rearange_bombs_randomly(self, event):
-        self.Clear()
-        self.mine_field = mine.fill_with_bombs(self.mine_field, 6)
-        self.mine_field = mine.numbering_field(self.mine_field)
-        for row in self.mine_field:
-            for cell in row:
-                self.Add(
-                    wx.Button(self.parent, label=str(cell),
-                              size=wx.Size(20, 20)),
-                    0, wx.ALL | wx.ALIGN_TOP, 5
-                )
+        for i, row in enumerate(field):
+            for j, cell in enumerate(row):
+                tk.Button(self, text=f'{str(cell)}', height=1, width=1).grid(
+                    row=i, column=j)
 
 
-class MineFrame(wx.Frame):
-
+class Application(tk.Tk):
     def __init__(self):
-        super().__init__(parent=None,
-                         title='Python Mines')
-        self.panel = MinePanel(self)
-        self.Show()
+        tk.Tk.__init__(self)
+        self.title("Python Mines")
+        self.create_widgets()
+
+    def create_widgets(self):
+        self.top_frame = TopFrame(self)
+        self.mines_field = Mines(self)
+        self.top_frame.set_new_game_command(self.start_new_game)
+
+    def start_new_game(self):
+        self.mines_field.destroy()
+        self.mines_field = Mines(self)
 
 
-if __name__ == '__main__':
-    app = wx.App(False)
-    frame = MineFrame()
-    app.MainLoop()
+root = Application()
+# app = TopFrame(master=root)
+# mines = Mines(master=root)
+root.mainloop()
