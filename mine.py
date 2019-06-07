@@ -135,10 +135,10 @@ class MineGameField(Field):
     """
     _cells_dict = attr.ib(init=False, default={},
                           validator=attr.validators.instance_of(dict))
-    _won = attr.ib(init=False, default=True,
+    _won = attr.ib(init=False, default=False,
                    validator=attr.validators.instance_of(bool))
-    _loss = attr.ib(init=False, default=True,
-                     validator=attr.validators.instance_of(bool))
+    _loss = attr.ib(init=False, default=False,
+                    validator=attr.validators.instance_of(bool))
 
     def __attrs_post_init__(self):
         # There is no need to calculate it over and over again
