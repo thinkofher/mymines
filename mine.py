@@ -58,16 +58,10 @@ class Cell:
         self.status._label = number
 
     def is_empty(self):
-        if self.status._label != _BOMB:
-            return True
-        else:
-            return False
+        return self.status._label != _BOMB
 
     def is_bomb(self):
-        if self.status._label == _BOMB:
-            return True
-        else:
-            return False
+        return self.status._label == _BOMB
 
 
 @attr.s
