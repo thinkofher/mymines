@@ -213,6 +213,12 @@ class MineGameField(Field):
             flagged = curr_cell.is_flagged()
             self._cells_dict[cords]._flagged = not flagged
 
+    def is_won(self):
+        return self._won
+
+    def is_loss(self):
+        return self._loss
+
     def _auto_check_cell(self, cords: tuple):
         """
         Reveals all empty cells around given cords
