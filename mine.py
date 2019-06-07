@@ -13,6 +13,7 @@ def gen_field_matrix(width=8, heigth=10):
     return ans_matrix
 
 
+# TODO: Search for some itertools implementation
 def add_random_bomb_cords(cords_list, width, heigth):
 
     # Substract 1 because of list indexing starts at 0

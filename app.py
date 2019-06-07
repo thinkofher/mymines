@@ -36,7 +36,8 @@ class Mines(tk.Frame):
 
         for i, row in enumerate(field):
             for j, cell in enumerate(row):
-                tk.Button(self, text=f'{str(cell)}', height=1, width=1).grid(
+                tk.Button(self, text=f'{str(cell)}', height=1, width=1,
+                          state=tk.DISABLED, relief=tk.SUNKEN).grid(
                     row=i, column=j)
 
 
@@ -56,7 +57,6 @@ class Application(tk.Tk):
         self.mines_field = Mines(self)
 
 
-root = Application()
-# app = TopFrame(master=root)
-# mines = Mines(master=root)
-root.mainloop()
+if __name__ == '__main__':
+    root = Application()
+    root.mainloop()
