@@ -7,6 +7,8 @@ _BOMB = 'x'
 _FAIL = 'failed'
 
 
+
+# TODO: split all of this into separate files
 @attr.s
 class Status:
     _label = attr.ib()
@@ -29,6 +31,7 @@ class Status:
         return Status(_BOMB)
 
 
+# TODO: split all of this into separate files
 @attr.s
 class Cell:
     """
@@ -116,6 +119,7 @@ class Cell:
         self.status._label = number
 
 
+# TODO: split all of this into separate files
 @attr.s
 class Field:
     """
@@ -203,6 +207,7 @@ class MineGameField(Field):
                 except KeyError:
                     pass
 
+    # TODO: track the number of flags
     def toggle_flag(self, cords: tuple):
         """
         Toggles flag in given cords
@@ -305,6 +310,7 @@ def visualize_field(field: Field, hidden=True):
         print('', end='\n')
 
 
+# TODO: split all of this into separate files
 def cords_directions(delete_self=True):
     """
     Returns list with combinations of directions

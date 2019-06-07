@@ -21,7 +21,7 @@ _HELP = """
     c == Reaveals given cell
     a == Reaveals everything around given cell
          as long it is not flagged.
-    f == Flag given cell
+    f == Flags given cell
     h == Help
     q == Quit
 """
@@ -66,13 +66,13 @@ if __name__ == '__main__':
             print()
             visualize_field(game, hidden=False)
             print()
-            print(">>> You won! Congratulations.")
+            print(">>> You won. Congratulations!")
             sys.exit(0)
         if game.is_loss():
             print()
             visualize_field(game, hidden=False)
             print()
-            print(">>> You lost. You can try again thou!")
+            print(">>> You lost. You can try !")
             sys.exit(0)
 
         print()
