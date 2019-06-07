@@ -291,17 +291,17 @@ def visualize_field(field: Field, hidden=True):
             try:
                 curr_cell = field._cells_dict[(x, y)]
                 if hidden:
-                    to_show = f'{curr_cell.get_label()}'
+                    to_show = f'[{curr_cell.get_label()}]'
                 else:
-                    to_show = f'{curr_cell.get_true_label()}'
+                    to_show = f'[{curr_cell.get_true_label()}]'
                 print(to_show, end='  ')
             except KeyError:
                 if x == -1 and y == -1:
                     print(" ", end=' ')
                 elif x == -1:
-                    print("%2d" % (y), end=' ')
+                    print("%3d" % (y), end=' ')
                 elif y == -1:
-                    print("%2d" % (x), end=' ')
+                    print("%4d" % (x), end=' ')
         print('', end='\n')
 
 
