@@ -137,7 +137,7 @@ class MineGameField(Field):
                           validator=attr.validators.instance_of(dict))
     _won = attr.ib(init=False, default=True,
                    validator=attr.validators.instance_of(bool))
-    _loose = attr.ib(init=False, default=True,
+    _loss = attr.ib(init=False, default=True,
                      validator=attr.validators.instance_of(bool))
 
     def __attrs_post_init__(self):
@@ -171,12 +171,13 @@ class MineGameField(Field):
         if not self._cells_dict[cords].is_flagged():
             if self._cells_dict[cords].check() == _FAIL:
                 if not self._won:
-                    self._loose = True
+                    self._loss = True
                 return _FAIL
             else:
                 # after checking start revealing other
                 # empty cells
                 self._auto_check_cell(cords)
+                self._update_won_status()
 
     def player_check_arround(self, cords: tuple):
         """
@@ -241,7 +242,7 @@ class MineGameField(Field):
     def _update_won_status(self):
         hidden_bombs = 0
         other_cells = 0
-        if not self._loose:
+        if not self._loss:
             for key in self._cells_dict:
                 curr_cell = self._cells_dict[key]
                 if not curr_cell.is_revealed():
