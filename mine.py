@@ -126,6 +126,9 @@ class Field:
 
 
 def visualize_field(field):
+    """
+    Prompts visualization of given field
+    """
     for y in range(field.heigth):
         for x in range(field.width):
             curr_cell = field._cell_dict[(x, y)]
@@ -136,7 +139,7 @@ def visualize_field(field):
 def check_neighborhood(cell_dict, cords):
     """
     Returns number of bombs in neighborhood of cell
-    in give dictionary.
+    in given dictionary.
     """
     # Create all possible combinations of neighboor location
     # Example: (-1, 1), (0, 1), (1, 0) ...
