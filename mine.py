@@ -43,11 +43,22 @@ class Cell:
                        validator=attr.validators.instance_of(bool))
 
     def check(self):
+        """
+        When playing, player is checking
+        if there is a bomb hidden in cell
+        or not.
+        """
         self.hidden = False
         if self.is_bomb():
             return _FAIL
         else:
             return None
+
+    def is_flagged(self):
+        """
+        Checks whether the cell is flagged
+        """
+        return self._flagged
 
     def is_revealed(self):
         """
@@ -66,15 +77,36 @@ class Cell:
         Checks label of cell
         if it is hidden, it will return '?'
         """
-        if self.hidden:
-            return '?'
-        elif self.flagged:
+        if self._flagged:
             return 'f'
+        elif self.hidden:
+            return '?'
         else:
             return self.status.label
 
+    def get_number(self):
+        """
+        Returns the number given to that Cell
+        during the game
+        """
+        try:
+            number = int(self.status.label)
+            return number
+        except ValueError:
+            # There is no number given to this Cell
+            return None
+
+    def is_empty(self):
+        return self.status._label == _EMPTY
+
+    def is_bomb(self):
+        return self.status._label == _BOMB
+
     @staticmethod
     def make_from_tuple(cords: tuple):
+        """
+        Returns empty cell with given coordinates
+        """
         return Cell(cords[0], cords[1], Status.gen_empty_status())
 
     def _fill_with_bomb(self):
@@ -82,12 +114,6 @@ class Cell:
 
     def _numberize(self, number: int):
         self.status._label = number
-
-    def is_empty(self):
-        return self.status._label == _EMPTY
-
-    def is_bomb(self):
-        return self.status._label == _BOMB
 
 
 @attr.s
@@ -107,15 +133,15 @@ class MineGameField(Field):
     Adds bunch of methods required to make
     a decent game from Field object
     """
-    _cell_dict = attr.ib(init=False, default={},
-                         validator=attr.validators.instance_of(dict))
+    _cells_dict = attr.ib(init=False, default={},
+                          validator=attr.validators.instance_of(dict))
     _won = attr.ib(init=False, default=True,
                    validator=attr.validators.instance_of(bool))
     _loose = attr.ib(init=False, default=True,
                      validator=attr.validators.instance_of(bool))
 
     def __attrs_post_init__(self):
-        # There is no need to calculate them over and over again
+        # There is no need to calculate it over and over again
         self._neighborhood_combinations = cords_directions(delete_self=True)
 
         self.new_game()
@@ -136,31 +162,89 @@ class MineGameField(Field):
         cell_cords = product(
             range(self.width), range(self.heigth), repeat=1)
         for cords in cell_cords:
-            self._cell_dict[cords] = Cell.make_from_tuple(cords)
+            self._cells_dict[cords] = Cell.make_from_tuple(cords)
 
     def player_check(self, cords: tuple):
-        if self._cell_dict[cords].check() == _FAIL:
-            self._won = False
-            self._loose = True
-            return _FAIL
-        else:
-            self._auto_check_cell(cords)
+        """
+        Checks cell in given chords.
+        """
+        if not self._cells_dict[cords].is_flagged():
+            if self._cells_dict[cords].check() == _FAIL:
+                if not self._won:
+                    self._loose = True
+                return _FAIL
+            else:
+                # after checking start revealing other
+                # empty cells
+                self._auto_check_cell(cords)
+
+    def player_check_arround(self, cords: tuple):
+        """
+        Checks all cells around player choice
+        """
+        # check for number of flags around cell that
+        # player has choosen
+        n_of_flags = check_neighborhood(self._cells_dict, cords,
+                                        check_func=lambda cell:
+                                            cell.is_flagged())
+
+        # cell that player choosed to check around
+        check_cell = self._cells_dict[cords]
+
+        if self._cells_dict[cords].is_revealed():
+            for dx, dy in self._neighborhood_combinations:
+                curr_cords = (cords[0]+dx, cords[1]+dy)
+                try:
+                    curr_cell = self._cells_dict[curr_cords]
+                    if (not curr_cell.is_revealed()) and (
+                            n_of_flags == check_cell.get_number()):
+                        self.player_check(curr_cords)
+                except KeyError:
+                    pass
+
+    def toggle_flag(self, cords: tuple):
+        """
+        Toggles flag in given cords
+        """
+        curr_cell = self._cells_dict[cords]
+
+        # cell has to be hidden to put flag on it
+        if not curr_cell.is_revealed():
+            flagged = curr_cell.is_flagged()
+            self._cells_dict[cords]._flagged = not flagged
 
     def _auto_check_cell(self, cords: tuple):
+        """
+        Reveals all empty cells around given cords
+        """
         for dx, dy in self._neighborhood_combinations:
             curr_cords = (cords[0]+dx, cords[1]+dy)
             try:
-                curr_cell = self._cell_dict[curr_cords]
+                curr_cell = self._cells_dict[curr_cords]
                 if not curr_cell.is_revealed():
                     if curr_cell.is_empty():
-                        self._cell_dict[curr_cords].check()
+                        self._cells_dict[curr_cords].check()
                         self._auto_check_cell(curr_cords)
                     elif curr_cell.is_bomb():
                         return
                     else:
-                        self._cell_dict[curr_cords].check()
+                        self._cells_dict[curr_cords].check()
             except KeyError:
                 continue
+
+    def _update_won_status(self):
+        hidden_bombs = 0
+        other_cells = 0
+        if not self._loose:
+            for key in self._cells_dict:
+                curr_cell = self._cells_dict[key]
+                if not curr_cell.is_revealed():
+                    if curr_cell.is_bomb():
+                        hidden_bombs += 1
+                    else:
+                        other_cells += 1
+            if (hidden_bombs - other_cells) == self.n_of_bombs:
+                self._won = True
 
     def _fill_with_bombs(self):
         """
@@ -169,7 +253,7 @@ class MineGameField(Field):
         """
         bombs_cords = self._choose_random_bombs_cords()
         for cords in bombs_cords:
-            self._cell_dict[cords]._fill_with_bomb()
+            self._cells_dict[cords]._fill_with_bomb()
 
     def _choose_random_bombs_cords(self):
         """
@@ -177,18 +261,18 @@ class MineGameField(Field):
         returns them
         """
         return sample(
-            [*self._cell_dict], self.n_of_bombs)
+            [*self._cells_dict], self.n_of_bombs)
 
     def _numberize_fields(self):
         """
         Numberize empty field based on
         coordinates of bomb fields
         """
-        for cords in self._cell_dict:
-            if self._cell_dict[cords].is_empty():
-                n_of_bombs = check_neighborhood(self._cell_dict, cords)
+        for cords in self._cells_dict:
+            if self._cells_dict[cords].is_empty():
+                n_of_bombs = check_neighborhood(self._cells_dict, cords)
                 if n_of_bombs > 0:
-                    self._cell_dict[cords]._numberize(n_of_bombs)
+                    self._cells_dict[cords]._numberize(n_of_bombs)
 
 
 def visualize_field(field: Field, hidden=True):
@@ -198,11 +282,11 @@ def visualize_field(field: Field, hidden=True):
     for y in range(-1, field.heigth):
         for x in range(-1, field.width):
             try:
-                curr_cell = field._cell_dict[(x, y)]
+                curr_cell = field._cells_dict[(x, y)]
                 if hidden:
                     to_show = f'{curr_cell.get_label()}'
                 else:
-                    to_show = f'{curr_cell.status._label}'
+                    to_show = f'{curr_cell.get_true_label()}'
                 print(to_show, end='  ')
             except KeyError:
                 if x == -1 and y == -1:
@@ -230,36 +314,23 @@ def cords_directions(delete_self=True):
     return neighborhood_combinations
 
 
-def check_neighborhood(cell_dict: dict, cords: tuple):
+def check_neighborhood(cell_dict: dict, cords: tuple,
+                       check_func=lambda cell: cell.is_bomb(),
+                       check_self=False):
     """
     Returns number of bombs in neighborhood of cell
     in given dictionary.
     """
-    neighborhood_combinations = cords_directions()
+    neighborhood_combinations = cords_directions(not check_self)
 
-    n_of_bombs = 0
+    n_of_things = 0
     for dx, dy in neighborhood_combinations:
         try:
             x = cords[0]
             y = cords[1]
             current_cell = cell_dict[(x+dx, y+dy)]
-            if current_cell.is_bomb():
-                n_of_bombs += 1
+            if check_func(current_cell):
+                n_of_things += 1
         except KeyError:
             pass
-    return n_of_bombs
-
-
-if __name__ == '__main__':
-    test_field = MineGameField(8, 8, n_of_bombs=4)
-    visualize_field(test_field, hidden=False)
-    print(3*'-\n')
-    visualize_field(test_field)
-    print(3*'-\n')
-    while True:
-        x = input("Enter x: ")
-        y = input("Enter y: ")
-        cords = (int(x), int(y))
-        test_field.player_check(cords)
-        print(3*'-\n')
-        visualize_field(test_field)
+    return n_of_things
