@@ -4,8 +4,8 @@ from mine import visualize_field, MineGameField
 
 
 def x_y_input():
-    x = input(">>> Enter x: ")
-    y = input(">>> Enter y: ")
+    x = click.prompt(">>> Enter x")
+    y = click.prompt(">>> Enter y")
     return (int(x), int(y))
 
 
@@ -50,7 +50,7 @@ def main(width, height, n_of_bombs):
 
     while True:
         click.echo("\nWhat do you want to do? (c, a, f, h, q): ")
-        action = input(">>> ").lower()
+        action = click.prompt(">>> ", prompt_suffix="").lower()
 
         try:
             if action == 'c':
