@@ -1,5 +1,6 @@
-from mine import visualize_field, MineGameField
 import sys
+import click
+from mine import visualize_field, MineGameField
 
 
 def x_y_input():
@@ -26,10 +27,16 @@ _HELP = """
     q == Quit
 """
 
-if __name__ == '__main__':
-    width = 8
-    height = 8
-    n_of_bombs = 2
+
+@click.command()
+@click.option('--width', default=8, help='Width of minefield.')
+@click.option('--height', default=8, help='Height of minefield')
+@click.option('--n_of_bombs', default=10,
+              help='Number of randomly spawned bombs in minefield')
+def main(width, height, n_of_bombs):
+    """
+    CLI implementation of Minesweeper game
+    """
     game = MineGameField(
         width, height, n_of_bombs)
     print(_INFO)
@@ -72,8 +79,12 @@ if __name__ == '__main__':
             print()
             visualize_field(game, hidden=False)
             print()
-            print(">>> You lost. You can try !")
+            print(">>> You lost. You can try again!")
             sys.exit(0)
 
         print()
         visualize_field(game)
+
+
+if __name__ == '__main__':
+    main()
