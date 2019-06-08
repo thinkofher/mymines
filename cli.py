@@ -29,9 +29,9 @@ _HELP = """
 
 
 @click.command()
-@click.option('--width', default=8, help='Width of minefield.')
-@click.option('--height', default=8, help='Height of minefield')
-@click.option('--n_of_bombs', default=10,
+@click.option('-w', '--width', default=8, help='Width of minefield.')
+@click.option('-h', '--height', default=8, help='Height of minefield')
+@click.option('-n', '--n_of_bombs', default=10,
               help='Number of randomly spawned bombs in minefield')
 def main(width, height, n_of_bombs):
     """
