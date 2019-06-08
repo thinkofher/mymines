@@ -7,7 +7,6 @@ _BOMB = 'x'
 _FAIL = 'failed'
 
 
-
 # TODO: split all of this into separate files
 @attr.s
 class Status:
@@ -235,16 +234,24 @@ class MineGameField(Field):
                 curr_cell = self._cells_dict[curr_cords]
                 if not curr_cell.is_revealed():
                     if curr_cell.is_empty():
+                        # Cell is empty so we need to reveal all other
+                        # cells around it
                         self._cells_dict[curr_cords].check()
                         self._auto_check_cell(curr_cords)
                     elif curr_cell.is_bomb():
+                        # Cell is a bomb, so algorithm stops
                         return
                     else:
+                        # Cell is a number, so algorithm reveal it
+                        # and dont go deeper
                         self._cells_dict[curr_cords].check()
             except KeyError:
                 continue
 
     def _update_won_status(self):
+        """
+        Checks whether game is won
+        """
         hidden_bombs = 0
         other_cells = 0
         if not self._loss:
@@ -255,6 +262,8 @@ class MineGameField(Field):
                         hidden_bombs += 1
                     else:
                         other_cells += 1
+            # If there are no more cells to reveal and all bombs
+            # are hidden, the game is over and player won
             if (hidden_bombs - other_cells) == self.n_of_bombs:
                 self._won = True
 
