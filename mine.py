@@ -195,7 +195,7 @@ class MineGameField(Field):
         # cell that player choosed to check around
         check_cell = self._cells_dict[cords]
 
-        if self._cells_dict[cords].is_revealed():
+        if check_cell.is_revealed():
             for dx, dy in self._neighborhood_combinations:
                 curr_cords = (cords[0]+dx, cords[1]+dy)
                 try:
