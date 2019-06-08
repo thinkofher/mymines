@@ -39,17 +39,17 @@ def main(width, height, n_of_bombs):
     """
     game = MineGameField(
         width, height, n_of_bombs)
-    print(_INFO)
+    click.echo(_INFO)
 
     # uncomment if you want to debug
     # visualize_field(game, hidden=False)
 
-    print()
+    click.echo()
     visualize_field(game)
-    print()
+    click.echo()
 
     while True:
-        print("\nWhat do you want to do? (c, a, f, h, q): ")
+        click.echo("\nWhat do you want to do? (c, a, f, h, q): ")
         action = input(">>> ").lower()
 
         try:
@@ -63,26 +63,24 @@ def main(width, height, n_of_bombs):
                 cords = x_y_input()
                 game.toggle_flag(cords)
             elif action == 'h':
-                print(_HELP)
+                click.echo(_HELP)
             else:
                 break
         except (KeyError, ValueError):
-            print('>>> Bad input. Try Again. <<<')
+            click.echo('>>> Bad input. Try Again. <<<')
 
         if game.is_won():
-            print()
+            click.echo()
             visualize_field(game, hidden=False)
-            print()
-            print(">>> You won. Congratulations!")
+            click.echo("\n>>> You won. Congratulations!")
             sys.exit(0)
         if game.is_loss():
-            print()
+            click.echo()
             visualize_field(game, hidden=False)
-            print()
-            print(">>> You lost. You can try again!")
+            click.echo("\n>>> You lost. You can try again!")
             sys.exit(0)
 
-        print()
+        click.echo()
         visualize_field(game)
 
 
