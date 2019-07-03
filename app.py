@@ -34,7 +34,24 @@ class Mines(tk.Frame):
             self.gen_button_from_cords(cords)
 
     def gen_button_from_cords(self, cords):
-        text_string = self._game._cells_dict[cords].get_label()
+        label = self._game._cells_dict[cords].get_label()
+
+        if label == mine.HIDDEN:
+            state = tk.NORMAL
+            relief = tk.RAISED
+            text = ''
+        elif label == mine.EMPTY:
+            state = tk.NORMAL
+            relief = tk.SUNKEN
+            text = ''
+        elif label == mine.FLAGGED:
+            state = tk.NORMAL
+            relief = tk.RAISED
+            text = 'f'
+        else:
+            state = tk.NORMAL
+            relief = tk.SUNKEN
+            text = label
 
         def left_click_func(event):
             self._game.player_check(cords)
@@ -48,8 +65,8 @@ class Mines(tk.Frame):
             self._game.toggle_flag(cords)
             self.gen_buttons()
 
-        curr_button = tk.Button(self, text=text_string, height=1, width=1,
-                                state=tk.DISABLED, relief=tk.SUNKEN)
+        curr_button = tk.Button(self, text=text, height=1, width=1,
+                                state=state, relief=relief)
         curr_button.bind('<Button-1>', left_click_func)
         curr_button.bind('<Button-2>', middle_click_func)
         curr_button.bind('<Button-3>', right_click_func)
