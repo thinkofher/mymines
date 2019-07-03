@@ -46,23 +46,34 @@ class Mines(tk.Frame):
         if is_loss:
             self.master.top_frame.set_new_game_text('You loss!')
 
+        curr_button = tk.Button(self, height=3, width=3)
+
         # buttons style depends on cell label
         if label == mine.HIDDEN:
             state = tk.NORMAL
             relief = tk.RAISED
             text = ''
+            curr_button.config(state=state, relief=relief, text=text)
         elif label == mine.EMPTY:
             state = tk.NORMAL
             relief = tk.SUNKEN
             text = ''
+            curr_button.config(state=state, relief=relief, text=text)
         elif label == mine.FLAGGED:
             state = tk.NORMAL
             relief = tk.RAISED
             text = 'f'
+            curr_button.config(state=state, relief=relief, text=text)
+        elif label == mine.BOMB:
+            state = tk.NORMAL
+            relief = tk.SUNKEN
+            text = 'x'
+            curr_button.config(state=state, relief=relief, text=text)
         else:
             state = tk.NORMAL
             relief = tk.SUNKEN
             text = label
+            curr_button.config(state=state, relief=relief, text=text)
 
         def left_click_func(event):
             """
@@ -94,8 +105,6 @@ class Mines(tk.Frame):
                 self._game.toggle_flag(cords)
                 self.gen_buttons()
 
-        curr_button = tk.Button(self, text=text, height=1, width=1,
-                                state=state, relief=relief)
         curr_button.bind('<Button-1>', left_click_func)
         curr_button.bind('<Button-2>', middle_click_func)
         curr_button.bind('<Button-3>', right_click_func)
