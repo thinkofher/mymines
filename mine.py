@@ -221,6 +221,9 @@ class MineGameField(Field):
         if not curr_cell.is_revealed():
             flagged = curr_cell.is_flagged()
             self._cells_dict[cords]._flagged = not flagged
+        elif curr_cell.is_revealed() and curr_cell.is_flagged():
+            self._cells_dict[cords]._flagged = False
+            self._cells_dict[cords].hidden = True
 
     def is_won(self):
         return self._won
