@@ -184,6 +184,7 @@ class MineGameField(Field):
                 # empty cells
                 self._auto_check_cell(cords)
                 self._update_won_status()
+                return None
 
     def player_check_arround(self, cords: tuple):
         """
