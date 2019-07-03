@@ -16,9 +16,6 @@ class TopFrame(tk.Frame):
     def set_new_game_command(self, func):
         self.new_game.config(command=func)
 
-    def say_hi(self):
-        print("hi there, everyone!")
-
 
 class Mines(tk.Frame):
     def __init__(self, master=None):
