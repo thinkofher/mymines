@@ -2,8 +2,10 @@ import attr
 from random import sample
 from itertools import product
 
-_EMPTY = '.'
-_BOMB = 'x'
+EMPTY = '.'
+BOMB = 'x'
+FLAGGED = 'f'
+HIDDEN = '?'
 _FAIL = 'failed'
 
 
@@ -22,12 +24,12 @@ class Status:
     @staticmethod
     def gen_empty_status():
         """Generates empty Status object"""
-        return Status(_EMPTY)
+        return Status(EMPTY)
 
     @staticmethod
     def gen_bomb_status():
         """Generates bomb Status object"""
-        return Status(_BOMB)
+        return Status(BOMB)
 
 
 # TODO: split all of this into separate files
@@ -80,9 +82,9 @@ class Cell:
         if it is hidden, it will return '?'
         """
         if self._flagged:
-            return 'f'
+            return FLAGGED
         elif self.hidden:
-            return '?'
+            return HIDDEN
         else:
             return self.status.label
 
@@ -99,10 +101,10 @@ class Cell:
             return None
 
     def is_empty(self):
-        return self.status._label == _EMPTY
+        return self.status._label == EMPTY
 
     def is_bomb(self):
-        return self.status._label == _BOMB
+        return self.status._label == BOMB
 
     @staticmethod
     def make_from_tuple(cords: tuple):
