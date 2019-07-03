@@ -46,7 +46,7 @@ class Mines(tk.Frame):
         if is_loss:
             self.master.top_frame.set_new_game_text('You loss!')
 
-        curr_button = tk.Button(self, height=3, width=3)
+        curr_button = tk.Button(self, height=1, width=1)
 
         # buttons style depends on cell label
         if label == mine.HIDDEN:
