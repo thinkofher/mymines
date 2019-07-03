@@ -16,6 +16,9 @@ class TopFrame(tk.Frame):
     def set_new_game_command(self, func):
         self.new_game.config(command=func)
 
+    def set_new_game_text(self, text):
+        self.new_game.config(text=text)
+
 
 class Mines(tk.Frame):
     def __init__(self, master=None):
