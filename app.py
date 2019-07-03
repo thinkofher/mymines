@@ -54,16 +54,34 @@ class Mines(tk.Frame):
             text = label
 
         def left_click_func(event):
-            self._game.player_check(cords)
-            self.gen_buttons()
+            """
+            Helper func for left mouse click event
+            """
+            if is_won or is_loss:
+                pass
+            else:
+                self._game.player_check(cords)
+                self.gen_buttons()
 
         def right_click_func(event):
-            self._game.player_check_arround(cords)
-            self.gen_buttons()
+            """
+            Helper func for right mouse click event
+            """
+            if is_won or is_loss:
+                pass
+            else:
+                self._game.player_check_arround(cords)
+                self.gen_buttons()
 
         def middle_click_func(event):
-            self._game.toggle_flag(cords)
-            self.gen_buttons()
+            """
+            Helper func for middle mouse click event
+            """
+            if is_won or is_loss:
+                pass
+            else:
+                self._game.toggle_flag(cords)
+                self.gen_buttons()
 
         curr_button = tk.Button(self, text=text, height=1, width=1,
                                 state=state, relief=relief)
