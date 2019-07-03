@@ -173,7 +173,8 @@ class MineGameField(Field):
         """
         Checks cell in given chords.
         """
-        if not self._cells_dict[cords].is_flagged():
+        if (not self._cells_dict[cords].is_flagged() and
+                not self._cells_dict[cords].is_revealed()):
             if self._cells_dict[cords].check() == _FAIL:
                 if not self._won:
                     self._loss = True
