@@ -21,15 +21,12 @@ class TopFrame(tk.Frame):
 
 
 class Mines(tk.Frame):
-    def __init__(self, master=None):
+    def __init__(self, game, master=None):
         super().__init__(master)
         self.master = master
         self.pack()
-        self.init_game()
+        self._game = game
         self.gen_buttons()
-
-    def init_game(self):
-        self._game = mine.MineGameField()
 
     def gen_buttons(self):
 
@@ -39,6 +36,17 @@ class Mines(tk.Frame):
     def gen_button_from_cords(self, cords):
         label = self._game._cells_dict[cords].get_label()
 
+        # checking game status
+        is_won = self._game.is_won()
+        is_loss = self._game.is_loss()
+
+        # sending information to master about game status
+        if is_won:
+            self.master.top_frame.set_new_game_text('You Won!')
+        if is_loss:
+            self.master.top_frame.set_new_game_text('You loss!')
+
+        # buttons style depends on cell label
         if label == mine.HIDDEN:
             state = tk.NORMAL
             relief = tk.RAISED
@@ -98,16 +106,19 @@ class Application(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self.title("Python Mines")
+        self._game = mine.MineGameField()
         self.create_widgets()
 
     def create_widgets(self):
         self.top_frame = TopFrame(self)
-        self.mines_field = Mines(self)
+        self.mines_field = Mines(self._game, master=self)
         self.top_frame.set_new_game_command(self.start_new_game)
 
     def start_new_game(self):
         self.mines_field.destroy()
-        self.mines_field = Mines(self)
+        self.top_frame.set_new_game_text('New Game')
+        self._game = mine.MineGameField()
+        self.mines_field = Mines(self._game, master=self)
 
 
 if __name__ == '__main__':
