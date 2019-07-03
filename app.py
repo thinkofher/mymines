@@ -25,20 +25,19 @@ class Mines(tk.Frame):
         super().__init__(master)
         self.master = master
         self.pack()
+        self.init_game()
         self.gen_buttons()
+
+    def init_game(self):
+        self._game = mine.MineGameField()
 
     def gen_buttons(self):
 
-        field = mine.gen_field_matrix()
-        field = mine.fill_with_bombs(field, 6)
-        field = mine.numbering_field(field)
-        # width, heigth = len(field[0]), len(field)
-
-        for i, row in enumerate(field):
-            for j, cell in enumerate(row):
-                tk.Button(self, text=f'{str(cell)}', height=1, width=1,
-                          state=tk.DISABLED, relief=tk.SUNKEN).grid(
-                    row=i, column=j)
+        for cords in self._game._cells_dict:
+            text_string = self._game._cells_dict[cords].get_true_label()
+            tk.Button(self, text=text_string, height=1, width=1,
+                      state=tk.DISABLED, relief=tk.SUNKEN).grid(
+                          row=cords[0], column=cords[1])
 
 
 class Application(tk.Tk):
