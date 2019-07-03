@@ -31,10 +31,29 @@ class Mines(tk.Frame):
     def gen_buttons(self):
 
         for cords in self._game._cells_dict:
-            text_string = self._game._cells_dict[cords].get_true_label()
-            tk.Button(self, text=text_string, height=1, width=1,
-                      state=tk.DISABLED, relief=tk.SUNKEN).grid(
-                          row=cords[0], column=cords[1])
+            self.gen_button_from_cords(cords)
+
+    def gen_button_from_cords(self, cords):
+        text_string = self._game._cells_dict[cords].get_label()
+
+        def left_click_func(event):
+            self._game.player_check(cords)
+            self.gen_buttons()
+
+        def right_click_func(event):
+            self._game.player_check_arround(cords)
+            self.gen_buttons()
+
+        def middle_click_func(event):
+            self._game.toggle_flag(cords)
+            self.gen_buttons()
+
+        curr_button = tk.Button(self, text=text_string, height=1, width=1,
+                                state=tk.DISABLED, relief=tk.SUNKEN)
+        curr_button.bind('<Button-1>', left_click_func)
+        curr_button.bind('<Button-2>', middle_click_func)
+        curr_button.bind('<Button-3>', right_click_func)
+        curr_button.grid(row=cords[0], column=cords[1])
 
 
 class Application(tk.Tk):
