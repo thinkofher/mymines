@@ -166,6 +166,7 @@ class MineGameField(Field):
         """
         cell_cords = product(
             range(self.width), range(self.heigth), repeat=1)
+        self._cells_dict = {}
         for cords in cell_cords:
             self._cells_dict[cords] = Cell.make_from_tuple(cords)
 
